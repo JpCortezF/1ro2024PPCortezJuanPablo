@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<style>
+
+    .form-data{
+        margin-bottom: 2rem;
+    }
+    
+    .table-sortable th{
+        cursor: pointer;
+    }
+    
+    .table-sortable .th-sort-asc,
+    .table-sortable .th-sort-desc {
+        background: rgba(0,0,0,0.1);
+    }
+
+    .table-sortable .th-sort-asc::after{
+        content: "\25b4";
+    }
+
+    .table-sortable .th-sort-desc::after{
+        content: "\25be";
+    }
+
+    .table-sortable .th-sort-asc::after,
+    .table-sortable .th-sort-desc::after{
+        margin-left: 5px;
+    }
+    table {
+        border-collapse: collapse;
+        width: 100%;
+        margin-bottom: 2rem;
+    }
+    th, td {
+        border: 1px solid black;
+        padding: 8px;
+        text-align: left;
+    }
+    th {
+        background-color: #f2f2f2;
+    }
+
+    #btnAgregar{
+        padding: 8px;
+        box-sizing: border-box;
+    }
+    #btnAgregar:hover{
+        cursor: pointer;
+    }
+
+    .modal-open > *:not(.modal) {
+        display: none;
+    }
+
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 30%;
+        top: 10%;
+        width: 500px;
+        height: auto;
+        overflow: auto;
+        background-color: rgba(0,0,0,0.4);
+    }
+
+    #title-form{
+        text-align: center;
+    }
+    .modal-content {
+        display: flex;
+        background-color: #fefefe;
+        margin: 5% auto;
+        border: 1px black solid;
+        padding: 20px;
+        width: 80%;
+    }
+
+    .left {
+        flex: 1;
+    }
+
+    .right {
+        flex: 1;
+        margin-left: 20px;
+    }
+
+    .modal-content label,
+    .modal-content input,
+    .modal-content select {
+        display: block;
+        width: 100%;
+        padding: 8px;
+        box-sizing: border-box;
+    }
+    
+    .right button {
+        flex-direction: column;
+        justify-content: end;
+    }
+
+    .modal-content select {
+        width: 80%;
+    }
+    .btnModal {
+        margin-top: 10px;
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    .btnModal button {
+        flex: 1;
+        margin-left: 10px;
+        padding: 8px;
+        box-sizing: border-box;
+    }
+
+    .btnModal button:hover {
+        cursor: pointer;
+    }
+</style>
+<script>
+    const cadenaPersonas = '[{"id":1,"apellido":"Serrano","nombre":"Horacio","fechaNacimiento":19840103,"dni":45876942},{"id":2,"apellido":"Casas","nombre":"Julian","fechaNacimiento":19990723,"dni":98536214},{"id":3,"apellido":"Galeano","nombre":"Julieta","fechaNacimiento":20081103,"dni":74859612},{"id":4,"apellido":"Molina","nombre":"Juana","fechaNacimiento":19681201,"paisOrigen":"Paraguay"},{"id":5,"apellido":"Barrichello","nombre":"Rubens","fechaNacimiento":19720523,"paisOrigen":"Brazil"},{"id":666,"apellido":"Hkkinen","nombre":"Mika","fechaNacimiento":19680928,"paisOrigen":"Finlandia"}]'
+
+    const personasArray = JSON.parse(cadenaPersonas);
+</script>
+<body>
+    <form class="form-data">
+        <p>Form Listado</p>
+        <p>Filtrar por:
+            <span>
+                <select name="select" id="">
+                    <option value="Todos">Todos</option>
+                    <option value="Ciudadanos">Ciudadanos</option>
+                    <option value="Extranjeros">Extranjeros</option>
+                </select>
+            </span>
+        </p>
+        <p>Calcular:
+            <span>
+                <input type="text" name="" id="txtEdad">
+                <button id="btnCalcular">Calcular</button>
+            </span>
+        </p>
+        <input type="checkbox" name="id" id="idCheck" checked="true"><span>ID</span>
+        <input type="checkbox" name="nombre" id="nombreCheck" checked="true"><span>Nombre</span>
+        <input type="checkbox" name="apellido" id="apellidoCheck" checked="true"><span>Apellido</span>
+        <input type="checkbox" name="fecha" id="fechadenacimientoCheck" checked="true"><span>Fecha de Nacimiento</span>
+        <input type="checkbox" name="dni" id="dniCheck" checked="true"><span>DNI</span>
+        <input type="checkbox" name="paisdeorigen" id="paisdeorigenCheck" checked="true"><span>Pais De Origen</span>
+    </form>
+
+    <table class="table table-sortable" id="tabla-datos">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>Fecha De Nacimiento</th>
+                <th>DNI</th>
+                <th>Pais De Origen</th>
+            </tr>
+        </thead>
+        <tbody>
+            
+        </tbody>
+    </table>
+    <button id="btnAgregar">Agregar</button>
+
+    <form class="modal" id="modal">
+        <h1 id="title-form">Formulario ABM</h1>
+        <div class="modal-content">
+            <div class="left">
+                <label for="id">ID:</label>
+                <input type="number" id="txtId">
+                <label for="nombre">Nombre:</label>
+                <input type="text" id="idNombre" required>
+                <label for="apellido">Apellido:</label>
+                <input type="text" id="idApellido" required>
+                <label for="edad">Fecha de Nacimiento:</label>
+                <input type="datetime" id="idFecha" required>
+            </div>
+            <div class="right">
+                <label for="tipo">Tipo:</label>
+                <select id="tipo">
+                    <option value="Ciudadano">Ciudadano</option>
+                    <option value="Extranjero">Extranjero</option>
+                </select>
+                <label id="label-tipo1" for="dni">DNI:</label>
+                <input type="text" id="idInputTipo1" required>
+                <div class="btnModal">
+                    <button type="submit" id="btnCrear">Crear</button>
+                    <button hidden="true" type="submit" id="btnModificar">Modificar</button>
+                    <button hidden="true" type="submit" id="btnEliminar">Eliminar</button>
+                    <button id="btnCancelar">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </form>
+    <script src="./script.js"></script>
+    <script src="./formABM.js"></script>
+</body>
+</html>
